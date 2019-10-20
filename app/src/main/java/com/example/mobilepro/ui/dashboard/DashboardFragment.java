@@ -2,6 +2,8 @@ package com.example.mobilepro.ui.dashboard;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.storage.StorageManager;
@@ -34,9 +36,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -53,6 +59,8 @@ public class DashboardFragment extends Fragment {
     private EditText uploadAddress;
     private EditText uploadPhone;
     private EditText uploadDescription;
+
+    private String imageUrl;
 
     private Uri imageURI;
     private Map<String, Object> item;
@@ -106,33 +114,27 @@ public class DashboardFragment extends Fragment {
                 item.put("address",uploadAddress.getText().toString());
                 item.put("phone",uploadPhone.getText().toString());
                 item.put("description",uploadDescription.getText().toString());
-                item.put("price",Double.valueOf(uploadPrice.getText().toString()));
+                item.put("image",imageUrl);
+                String[] tags = uploadName.getText().toString().split(" ");
+                List<String> tagList = new ArrayList<String>();
+                for(String s:tags)
+                    tagList.add(s.toLowerCase());
+                item.put("tags",tagList);
+                double p;
+                try {
+                    p = Double.valueOf(uploadPrice.getText().toString());
+                }
+                catch (Exception x) {
+                    p=0;
+                }
+                item.put("price",p);
                 db.collection("123")
                         .add(item)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
-                                String id = documentReference.getId();
-                                final StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(id);
-                                Log.d("uri",imageURI.getPath());
-                                Uri path = Uri.fromFile((new File(imageURI.getPath())));
-                                UploadTask uploadTask = storageReference.putFile(path);
-                                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                                    @Override
-                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                        if(!task.isSuccessful())
-                                            throw  task.getException();
-                                        return storageReference.getDownloadUrl();
-                                    }
-                                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        if(task.isSuccessful()) {
-                                            Uri downloadUri = task.getResult();
-                                            Log.d("123",downloadUri.toString());
-                                        }
-                                    }
-                                });
+
+
                             }
                         });
             }
@@ -150,8 +152,33 @@ public class DashboardFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
         && data != null && data.getData() != null) {
+            Random random = new Random();
             imageURI = data.getData();
             Glide.with(this).load(imageURI).into(uploadImageView);
+
+            String id = "image/"+System.currentTimeMillis() + "" + random.nextInt(10000) +".JPEG";
+            FirebaseStorage fs = FirebaseStorage.getInstance("gs://mobile-test-fea0b.appspot.com");
+            final StorageReference storageReference = fs.getReference().child(id);
+
+            UploadTask uploadTask = storageReference.putFile(imageURI);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if(!task.isSuccessful())
+                        throw  task.getException();
+                    return storageReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()) {
+                        Uri downloadUri = task.getResult();
+
+                        imageUrl = downloadUri.toString();
+                        Log.d("123",imageUrl);
+                    }
+                }
+            });
         }
     }
 }

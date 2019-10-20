@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/spacedog" />
+
+        <TextView
+            android:id="@+id/showItemName"
+            android:layout_width="190dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="99dp"
+            android:layout_marginEnd="122dp"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+        <TextView
+            android:id="@+id/showItemShopName"
+            android:layout_width="190dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="101dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="120dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/showItemPrice"
+            android:layout_width="190dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="101dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="120dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/showItemAddress"
+            android:layout_width="190dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="101dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="120dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/showItemPhone"
+            android:layout_width="190dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="101dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="120dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/showItemPricetag"
+            android:layout_width="190dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="101dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="120dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/showItemDescription"
+            android:layout_width="190dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="101dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="120dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/showItemReviews"
+            android:layout_width="190dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="101dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="120dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
