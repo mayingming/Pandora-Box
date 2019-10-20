@@ -1,6 +1,8 @@
 package com.example.mobilepro;
 
 import android.content.Context;
+import android.location.Location;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,13 @@ import java.util.List;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
 
+    private double shopLatitude;
+    private double shopLongitude;
+    private Location shopLocation;
+    private double longitude;
+    private double latitude;
+    private Location loc;
+
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView itemName;
@@ -22,6 +31,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         TextView price;
         ImageView imageView;
         OnItemListener onItemListener;
+
 
         public ViewHolder(View view, OnItemListener onItemListener){
             super(view);
@@ -46,10 +56,12 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     private OnItemListener mOnItemListener;
 
     private Context context;
-    public FriendAdapter(List<item> items, Context context, OnItemListener onItemListener){
+    public FriendAdapter(List<item> items, double longitude, double latitude, Context context, OnItemListener onItemListener){
         this.items = items;
         this.context = context;
         this.mOnItemListener = onItemListener;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
@@ -67,8 +79,20 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.itemName.setText(items.get(position).getName());
         holder.shopName.setText(items.get(position).getShopName());
-        holder.distance.setText(items.get(position).getAddress());
+        shopLongitude = items.get(position).getLongitude();
+
+        shopLatitude = items.get(position).getLatitude();
+        shopLocation = new Location("");
+        shopLocation.setLatitude(shopLatitude);
+        shopLocation.setLongitude(shopLongitude);
+        loc = new Location("");
+        loc.setLatitude(latitude);
+        loc.setLongitude(longitude);
+        float distance = loc.distanceTo(shopLocation);
+        holder.distance.setText(new Float((float)(Math.round(distance))/1000).toString());
         holder.price.setText(""+items.get(position).getPrice());
+        Log.d(""+shopLatitude,new Double(shopLongitude).toString());
+        Log.d(new Double(latitude).toString(),new Double(longitude).toString());
         Glide.with(context)
                 .load(items.get(position).getImage())
                 .into(holder.imageView);

@@ -7,7 +7,7 @@ public class item {
     private String name;
     private String city;
     private double latitude;
-    private double longtitude;
+    private double longitude;
     private String address;
     private String image;
     private String shopName;
@@ -37,7 +37,7 @@ public class item {
         this.price = price;
     }
 
-    public item(String name, String address, String image, String shopName, double price, String phone, String description, String time, String city, List<String> reviews, List<item> recommendations){
+    public item(String name, String address, String image, String shopName, double price, String phone, String description, String time, String city, List<String> reviews, List<item> recommendations, double latitude, double longitude){
         this.name = name;
         createTags();
         this.address = address;
@@ -50,6 +50,8 @@ public class item {
         this.reviews = reviews;
         this.recommendations = recommendations;
         this.city = city;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getName() {
@@ -96,8 +98,8 @@ public class item {
         return latitude;
     }
 
-    public double getLongtitude() {
-        return longtitude;
+    public double getLongitude() {
+        return longitude;
     }
 
     public String[] getTags() {

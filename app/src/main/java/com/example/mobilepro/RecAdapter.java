@@ -61,7 +61,10 @@ public class RecAdapter extends RecyclerView.Adapter<RecAdapter.ViewHolder> {
 
     @Override
     public int getItemCount(){
-        return items.size();
+        if(items.size()<4)
+            return items.size();
+        else
+            return 4;
     }
 
     @Override

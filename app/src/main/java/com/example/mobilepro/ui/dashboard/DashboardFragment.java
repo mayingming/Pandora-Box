@@ -1,16 +1,14 @@
 package com.example.mobilepro.ui.dashboard;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.storage.StorageManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -41,11 +36,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -71,8 +66,9 @@ public class DashboardFragment extends Fragment {
     private EditText uploadAddress;
     private EditText uploadPhone;
     private EditText uploadDescription;
-    private double longtitude;
+    private double longitude;
     private double latitude;
+    private String city;
 
     private FusedLocationProviderClient client;
 
@@ -128,9 +124,17 @@ public class DashboardFragment extends Fragment {
                 @Override
                 public void onSuccess(Location location) {
                     if(location!=null){
-                        longtitude = location.getLongitude();
+                        longitude = location.getLongitude();
                         latitude = location.getLatitude();
-                        Log.d("loc", location.toString());
+                        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+                        List<Address> addresses = null;
+                        try {
+                            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        city = addresses.get(0).getLocality();
+                        Log.d("loc", city);
                     }
                 }
             });
@@ -154,11 +158,22 @@ public class DashboardFragment extends Fragment {
                 item.put("description",uploadDescription.getText().toString());
                 item.put("image",imageUrl);
                 item.put("latitude", latitude);
-                item.put("longtitude", longtitude);
+                item.put("longitude", longitude);
+                item.put("city", city);
                 String[] tags = uploadName.getText().toString().split(" ");
                 List<String> tagList = new ArrayList<String>();
-                for(String s:tags)
-                    tagList.add(s.toLowerCase());
+                int size = tags.length;
+                for(int i=0;i<size;i++)
+                    for(int j=i;j<size;j++)
+                    {
+                        String tagCombo = "";
+                        for(int k=i;k<j;k++)
+                            tagCombo = tagCombo+tags[k]+" ";
+                        tagCombo+=tags[j];
+                        tagList.add(tagCombo.toLowerCase());
+                    }
+//                for(String s:tags)
+//                    tagList.add(s.toLowerCase());
                 item.put("tags",tagList);
                 double p;
                 try {

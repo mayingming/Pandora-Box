@@ -16,6 +16,9 @@ limitations under the License.
 package com.example.mobilepro.tflite;
 
 import android.app.Activity;
+
+import androidx.fragment.app.Fragment;
+
 import java.io.IOException;
 
 /** This TensorFlow Lite classifier works with the quantized MobileNet model. */
@@ -27,15 +30,10 @@ public class ClassifierQuantizedMobileNet extends Classifier {
      */
     private byte[][] labelProbArray = null;
 
-    /**
-     * Initializes a {@code ClassifierQuantizedMobileNet}.
-     *
-     * @param activity
-     */
-    public ClassifierQuantizedMobileNet(Activity activity)
+    public ClassifierQuantizedMobileNet(Fragment fragment)
             throws IOException {
-        super(activity);
-        labelProbArray = new byte[1][1];
+        super(fragment);
+        labelProbArray = new byte[1][getNumLabels()];
     }
 
 
@@ -94,4 +92,3 @@ public class ClassifierQuantizedMobileNet extends Classifier {
         tflite.run(imgData, labelProbArray);
     }
 }
-

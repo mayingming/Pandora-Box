@@ -55,13 +55,19 @@ public class searchresult extends AppCompatActivity implements FriendAdapter.OnI
                             ids = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Map<String, Object> data = document.getData();
-                                double price;
+                                double price, longitude, latitude;
                                 try {
                                     price = Double.valueOf(data.get("price").toString());
+                                    longitude = Double.valueOf(data.get("longitude").toString());
+                                    latitude = Double.valueOf(data.get("latitude").toString());
+                                    Log.d(longitude+"longitude",latitude+"");
                                 } catch (Exception x) {
                                     price = 0;
+                                    longitude = 0;
+                                    latitude = 0;
+                                    Log.d("catch","c");
                                 }
-                                item = new item((String) data.get("name"), (String) data.get("address"), (String) data.get("image"), (String) data.get("shopName"), price, (String) data.get("phone"), (String) data.get("description"), (String) data.get("time"), (String) data.get("city"),null, null);
+                                item = new item((String) data.get("name"), (String) data.get("address"), (String) data.get("image"), (String) data.get("shopName"), price, (String) data.get("phone"), (String) data.get("description"), (String) data.get("time"), (String) data.get("city"),null, null,latitude,longitude);
                                 msgList.add(item);
                                 ids.add(document.getId());
                             }
@@ -72,9 +78,14 @@ public class searchresult extends AppCompatActivity implements FriendAdapter.OnI
     }
 
     public void initRecyleview(){
+        double longitude;
+        double latitude;
+        longitude = getIntent().getExtras().getDouble("longitude");
+        latitude = getIntent().getExtras().getDouble("latitude");
+        Log.d(longitude+"result test",latitude+"");
         RecyclerView msgRecyclerView = findViewById(R.id.list);
         msgRecyclerView.setLayoutManager(layoutManager);
-        adapter = new FriendAdapter(msgList,this,this);
+        adapter = new FriendAdapter(msgList,longitude, latitude,this,this);
         msgRecyclerView.setAdapter(adapter);
     }
     @Override

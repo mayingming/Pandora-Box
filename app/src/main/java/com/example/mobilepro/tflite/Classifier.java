@@ -25,6 +25,8 @@ import android.os.SystemClock;
 import android.os.Trace;
 import android.util.Log;
 
+import androidx.fragment.app.Fragment;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -43,20 +45,19 @@ import org.tensorflow.lite.Interpreter;
 
 /** A classifier specialized to label images using TensorFlow Lite. */
 public abstract class Classifier {
-//    private static final Logger LOGGER = new Logger();
-//
-//    /** The model type used for classification. */
-//    public enum Model {
-//        FLOAT,
-//        QUANTIZED,
-//    }
-//
-//    /** The runtime device type used for executing classification. */
-//    public enum Device {
-//        CPU,
-//        NNAPI,
-//        GPU
-//    }
+
+    /** The model type used for classification. */
+    public enum Model {
+        FLOAT,
+        QUANTIZED,
+    }
+
+    /** The runtime device type used for executing classification. */
+    public enum Device {
+        CPU,
+        NNAPI,
+        GPU
+    }
 
     /** Number of results to show in the UI. */
     private static final int MAX_RESULTS = 3;
@@ -90,17 +91,10 @@ public abstract class Classifier {
     protected ByteBuffer imgData = null;
 
 
-    /**
-     * Creates a classifier with the provided configuration.
-     *
-     * @param activity The current Activity.
-//     * @param model The model to use for classification.
-//     * @param device The device to use for classification.
-     * @return A classifier with the desired configuration.
-     */
-    public Classifier create(Activity activity) throws IOException {
 
-            return new ClassifierQuantizedMobileNet(activity);
+    public static Classifier create(Fragment fragment) throws IOException {
+
+        return new ClassifierQuantizedMobileNet(fragment);
     }
 
     /** An immutable result returned by a Classifier describing what was recognized. */
@@ -174,8 +168,8 @@ public abstract class Classifier {
     }
 
     /** Initializes a {@code Classifier}. */
-    protected Classifier(Activity activity) throws IOException {
-        tfliteModel = loadModelFile(activity);
+    public Classifier(Fragment fragment) throws IOException {
+        tfliteModel = loadModelFile(fragment);
 //        switch (device) {
 //            case NNAPI:
 //                tfliteOptions.setUseNNAPI(true);
@@ -187,9 +181,9 @@ public abstract class Classifier {
 //            case CPU:
 //                break;
 //        }
-//        tfliteOptions.setNumThreads(numThreads);
+        tfliteOptions.setNumThreads(1);
         tflite = new Interpreter(tfliteModel, tfliteOptions);
-        labels = loadLabelList(activity);
+        labels = loadLabelList(fragment);
         imgData =
                 ByteBuffer.allocateDirect(
                         DIM_BATCH_SIZE
@@ -202,10 +196,10 @@ public abstract class Classifier {
     }
 
     /** Reads label list from Assets. */
-    private List<String> loadLabelList(Activity activity) throws IOException {
+    private List<String> loadLabelList(Fragment fragment) throws IOException {
         List<String> labels = new ArrayList<String>();
         BufferedReader reader =
-                new BufferedReader(new InputStreamReader(activity.getAssets().open(getLabelPath())));
+                new BufferedReader(new InputStreamReader(fragment.getActivity().getAssets().open(getLabelPath())));
         String line;
         while ((line = reader.readLine()) != null) {
             labels.add(line);
@@ -215,8 +209,8 @@ public abstract class Classifier {
     }
 
     /** Memory-map the model file in Assets. */
-    private MappedByteBuffer loadModelFile(Activity activity) throws IOException {
-        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(getModelPath());
+    private MappedByteBuffer loadModelFile(Fragment fragment) throws IOException {
+        AssetFileDescriptor fileDescriptor = fragment.getActivity().getAssets().openFd("mobilenet_v1_1.0_224_quant.tflite");
         FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
         FileChannel fileChannel = inputStream.getChannel();
         long startOffset = fileDescriptor.getStartOffset();
@@ -244,7 +238,7 @@ public abstract class Classifier {
         Log.d("readImage","image data read into bytebuffer");
     }
 
-    /** Runs inference and returns the classification results. */
+    /** Runs inference and returns the classification rCreated a Tensorflow Lite Image Classifieresults. */
     public List<Recognition> recognizeImage(final Bitmap bitmap) {
         // Log this method so that it can be analyzed with systrace.
         Trace.beginSection("recognizeImage");
@@ -386,4 +380,3 @@ public abstract class Classifier {
         return labels.size();
     }
 }
-
