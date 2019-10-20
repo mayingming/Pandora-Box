@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    aaptOptions {
+        noCompress "tflite"
+        noCompress "lite"
+    }
     packagingOptions {
         // Exclude file to avoid
         // Error: Duplicate files during packaging of APK
@@ -41,17 +45,17 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'com.google.firebase:firebase-storage:19.1.0'
-    implementation 'com.google.firebase:firebase-database:17.0.0'
+    implementation 'com.google.firebase:firebase-database:19.2.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-    implementation 'com.google.firebase:firebase-analytics:17.2.0'
     implementation 'com.google.firebase:firebase-firestore:21.2.0'
     implementation 'com.firebaseui:firebase-ui-storage:4.3.1'
     implementation 'com.google.firebase:firebase-auth:19.1.0'
     implementation 'com.google.api:api-common:1.1.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-
+    implementation 'org.tensorflow:tensorflow-lite:1.13.1'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

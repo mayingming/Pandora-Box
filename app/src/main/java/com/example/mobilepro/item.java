@@ -5,6 +5,7 @@ import java.util.List;
 public class item {
 
     private String name;
+    private String city;
     private double latitude;
     private double longtitude;
     private String address;
@@ -36,7 +37,7 @@ public class item {
         this.price = price;
     }
 
-    public item(String name, String address, String image, String shopName, double price, String phone, String description, String time, List<String> reviews, List<item> recommendations){
+    public item(String name, String address, String image, String shopName, double price, String phone, String description, String time, String city, List<String> reviews, List<item> recommendations){
         this.name = name;
         createTags();
         this.address = address;
@@ -48,6 +49,7 @@ public class item {
         this.time = time;
         this.reviews = reviews;
         this.recommendations = recommendations;
+        this.city = city;
     }
 
     public String getName() {
@@ -101,4 +103,6 @@ public class item {
     public String[] getTags() {
         return tags;
     }
+
+    public String getCity() { return city; }
 }

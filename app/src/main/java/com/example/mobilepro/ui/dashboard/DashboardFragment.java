@@ -1,9 +1,13 @@
 package com.example.mobilepro.ui.dashboard;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.storage.StorageManager;
@@ -19,6 +23,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -44,7 +49,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.app.Activity.RESULT_OK;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
 public class DashboardFragment extends Fragment {
 
@@ -59,6 +71,10 @@ public class DashboardFragment extends Fragment {
     private EditText uploadAddress;
     private EditText uploadPhone;
     private EditText uploadDescription;
+    private double longtitude;
+    private double latitude;
+
+    private FusedLocationProviderClient client;
 
     private String imageUrl;
 
@@ -79,12 +95,16 @@ public class DashboardFragment extends Fragment {
         return root;
     }
 
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.context = getActivity();
         layoutManager = new LinearLayoutManager(context);
         db = FirebaseFirestore.getInstance();
+
+        requestPermission();
+        client = LocationServices.getFusedLocationProviderClient(getActivity());
 
 
         buttonChooseImage = (Button) getView().findViewById(R.id.choosePic);
@@ -97,6 +117,24 @@ public class DashboardFragment extends Fragment {
         uploadAddress = (EditText) getView().findViewById(R.id.upload_address);
         uploadPhone = (EditText) getView().findViewById(R.id.upload_phone);
         uploadDescription = (EditText) getView().findViewById(R.id.upload_discription);
+
+        if(ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            return;
+        }
+        else
+        {
+            client.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if(location!=null){
+                        longtitude = location.getLongitude();
+                        latitude = location.getLatitude();
+                        Log.d("loc", location.toString());
+                    }
+                }
+            });
+        }
 
         buttonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +153,8 @@ public class DashboardFragment extends Fragment {
                 item.put("phone",uploadPhone.getText().toString());
                 item.put("description",uploadDescription.getText().toString());
                 item.put("image",imageUrl);
+                item.put("latitude", latitude);
+                item.put("longtitude", longtitude);
                 String[] tags = uploadName.getText().toString().split(" ");
                 List<String> tagList = new ArrayList<String>();
                 for(String s:tags)
@@ -139,6 +179,10 @@ public class DashboardFragment extends Fragment {
                         });
             }
         });
+    }
+
+    private void requestPermission(){
+        ActivityCompat.requestPermissions(getActivity(),new String[]{ACCESS_FINE_LOCATION},1);
     }
     private void openFilechooser(){
         Intent intent = new Intent();

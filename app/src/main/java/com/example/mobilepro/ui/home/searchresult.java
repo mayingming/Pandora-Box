@@ -61,7 +61,7 @@ public class searchresult extends AppCompatActivity implements FriendAdapter.OnI
                                 } catch (Exception x) {
                                     price = 0;
                                 }
-                                item = new item((String) data.get("name"), (String) data.get("address"), (String) data.get("image"), (String) data.get("shopName"), price, (String) data.get("phone"), (String) data.get("description"), (String) data.get("time"), null, null);
+                                item = new item((String) data.get("name"), (String) data.get("address"), (String) data.get("image"), (String) data.get("shopName"), price, (String) data.get("phone"), (String) data.get("description"), (String) data.get("time"), (String) data.get("city"),null, null);
                                 msgList.add(item);
                                 ids.add(document.getId());
                             }
