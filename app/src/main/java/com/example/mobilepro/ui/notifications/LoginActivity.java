@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mobilepro.R;
+import com.example.mobilepro.ui.home.HomeFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -100,7 +101,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        startActivity(HomeActivity);
+        Intent intent = new Intent();
+        intent.putExtra("userName",myAuthentication.getCurrentUser());
+        intent.putExtra("isLogIn", true);
+        setResult(LoginActivity.RESULT_OK,intent);
+
         finish();
     }
 

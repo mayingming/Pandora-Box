@@ -255,6 +255,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
+            Log.d("camera2","camera2");
             imageURI = data.getData();
             try {
                 recreateClassifier();
@@ -273,6 +274,25 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }else if (requestCode == 2 && resultCode == RESULT_OK){
+            try {
+                recreateClassifier();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageURI);
+                Bitmap newBitmap = getCompressBitmap(bitmap);
+                List<Classifier.Recognition> results = classifier.recognizeImage(newBitmap);
+                result = results.get(0).getTitle();
+                imageResult = result;
+                Log.d("result", result);
+                searchToken = imageResult.toLowerCase();
+                Intent intent = new Intent(getActivity(), searchresult.class);
+                intent.putExtra("token", searchToken);
+                intent.putExtra("longitude", longitude);
+                intent.putExtra("latitude",latitude);
+                startActivity(intent);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -384,8 +404,9 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
             if(photoFile!=null) {
                 pathToFile = photoFile.getAbsolutePath();
                 Uri photoURI = FileProvider.getUriForFile(getActivity(),"com.example.provider.camera.fileprovider",photoFile);
+                imageURI = photoURI;
                 takePic.putExtra(MediaStore.EXTRA_OUTPUT,photoURI);
-                startActivityForResult(takePic,1);
+                startActivityForResult(takePic,2);
             }
 
         }
