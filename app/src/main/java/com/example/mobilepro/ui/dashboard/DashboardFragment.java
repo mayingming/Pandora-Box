@@ -2,7 +2,6 @@ package com.example.mobilepro.ui.dashboard;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 
 import android.location.Address;
@@ -11,6 +10,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -31,6 +33,8 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -49,9 +53,6 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.app.Activity.RESULT_OK;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 public class DashboardFragment extends Fragment {
@@ -82,7 +83,10 @@ public class DashboardFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private Context context;
 
+
     private DashboardViewModel dashboardViewModel;
+    private FirebaseAuth myAuthentication;
+    private FirebaseUser user;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -101,6 +105,8 @@ public class DashboardFragment extends Fragment {
         layoutManager = new LinearLayoutManager(context);
         db = FirebaseFirestore.getInstance();
 
+        myAuthentication = FirebaseAuth.getInstance();
+        user = myAuthentication.getCurrentUser();
         requestPermission();
         client = LocationServices.getFusedLocationProviderClient(getActivity());
 
@@ -115,6 +121,8 @@ public class DashboardFragment extends Fragment {
         uploadAddress = (EditText) getView().findViewById(R.id.upload_address);
         uploadPhone = (EditText) getView().findViewById(R.id.upload_phone);
         uploadDescription = (EditText) getView().findViewById(R.id.upload_discription);
+
+        progressBar.setVisibility(View.INVISIBLE);
 
         if(ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
@@ -156,6 +164,7 @@ public class DashboardFragment extends Fragment {
         buttonPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
                 item = new HashMap<String, Object>();
                 item.put("name",uploadName.getText().toString());
                 item.put("shopName",uploadshopName.getText().toString());
@@ -166,6 +175,8 @@ public class DashboardFragment extends Fragment {
                 item.put("latitude", latitude);
                 item.put("longitude", longitude);
                 item.put("city", city);
+                if(user!=null)
+                    item.put("user", user.getEmail());
                 String[] tags = uploadName.getText().toString().split(" ");
                 List<String> tagList = new ArrayList<String>();
                 int size = tags.length;
@@ -194,8 +205,15 @@ public class DashboardFragment extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
-
-
+                                progressBar.setVisibility(View.INVISIBLE);
+                                promptMessage("Post Successful!");
+                                uploadName.setText("");
+                                uploadshopName.setText("");
+                                uploadPrice.setText("");
+                                uploadAddress.setText("");
+                                uploadPhone.setText("");
+                                uploadDescription.setText("");
+                                uploadImageView.setImageResource(R.drawable.spacedog);
                             }
                         });
             }
@@ -211,6 +229,15 @@ public class DashboardFragment extends Fragment {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
+
+    private void promptMessage(String message) {
+        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER,0,0);
+        View view = toast.getView();
+        view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        toast.show();
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
