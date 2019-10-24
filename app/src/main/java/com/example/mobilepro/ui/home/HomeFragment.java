@@ -95,6 +95,8 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
     private Uri imageURI;
     private String imageResult;
     private String pathToFile;
+    private Boolean shaking;
+    ArrayList<item> newItemList;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -102,6 +104,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+
         return root;
     }
     @Override
@@ -117,6 +120,8 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
         context = getActivity();
         db = FirebaseFirestore.getInstance();
         searchfield = "city";
+        shaking = false;
+        newItemList = new ArrayList<item>();
 
 
         requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
@@ -161,12 +166,12 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
                     }
                     else
                     {
-                        city="Sunnyvale";
+                        city="Melbourne";
                     }
                     zuoshang.setText(city);
 
                     db.collection("123")
-                            .whereEqualTo(searchfield, city)
+                            .whereEqualTo(searchfield, "Melbourne")
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -331,9 +336,6 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
 
 
     private final SensorEventListener sensorListener = new SensorEventListener() {
-
-        ArrayList<item> newItemList;
-
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
             float x = sensorEvent.values[0];
@@ -345,6 +347,10 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
             float delta = acelVal - acelLast;
             shake = shake * 0.9f + delta;
             if (shake > 12) {
+                if(shaking)
+                    return;
+                shaking = true;
+                newItemList.clear();
                 Random random = new Random();
                 int abc = random.nextInt(reclist.size());
                 for(int i=0;i<4;i++)
@@ -355,7 +361,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
                     abc++;
                 }
                 initRecyleview(newItemList);
-                Log.d("shake", "shaked");
+                shaking = false;
             }
         }
 

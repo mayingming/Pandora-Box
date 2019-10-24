@@ -61,6 +61,7 @@ public class DashboardFragment extends Fragment {
     private Button buttonChooseImage;
     private Button buttonPost;
     private ProgressBar progressBar;
+    private ProgressBar progressBar2;
     private ImageView uploadImageView;
     private EditText uploadName;
     private EditText uploadshopName;
@@ -114,6 +115,7 @@ public class DashboardFragment extends Fragment {
         buttonChooseImage = (Button) getView().findViewById(R.id.choosePic);
         buttonPost = (Button) getView().findViewById(R.id.post);
         progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
+        progressBar2 = (ProgressBar) getView().findViewById(R.id.progressBar2);
         uploadImageView = (ImageView) getView().findViewById(R.id.uploadImageView);
         uploadName = (EditText) getView().findViewById(R.id.upload_name);
         uploadshopName = (EditText) getView().findViewById(R.id.upload_shopName);
@@ -123,6 +125,7 @@ public class DashboardFragment extends Fragment {
         uploadDescription = (EditText) getView().findViewById(R.id.upload_discription);
 
         progressBar.setVisibility(View.INVISIBLE);
+        progressBar2.setVisibility(View.INVISIBLE);
 
         if(ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
@@ -242,6 +245,7 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        progressBar2.setVisibility(View.VISIBLE);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
         && data != null && data.getData() != null) {
             Random random = new Random();
@@ -267,6 +271,7 @@ public class DashboardFragment extends Fragment {
                         Uri downloadUri = task.getResult();
 
                         imageUrl = downloadUri.toString();
+                        progressBar2.setVisibility(View.INVISIBLE);
                         Log.d("123",imageUrl);
                     }
                 }
