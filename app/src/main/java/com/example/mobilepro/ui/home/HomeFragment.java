@@ -1,5 +1,6 @@
 package com.example.mobilepro.ui.home;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 
@@ -14,21 +15,26 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -46,8 +52,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -55,6 +64,7 @@ import java.util.Random;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.app.Activity.RESULT_OK;
+import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationListener {
 
@@ -85,6 +95,8 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
     private Classifier classifier;
     private Uri imageURI;
     private String imageResult;
+    private String pathToFile;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -107,7 +119,18 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
         db = FirebaseFirestore.getInstance();
         searchfield = "city";
 
+
+        requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
+
+
+        camera.setOnClickListener(new View.OnClickListener(){
+            public  void onClick(View view){
+                dispatchPictureTakerAction();
+            }
+        });
+
         requestPermission();
+
         client = LocationServices.getFusedLocationProviderClient(getActivity());
 
         if(ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
@@ -131,7 +154,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
                             e.printStackTrace();
                             addresses = null;
                         }
-                        if(addresses!=null)
+                        if(addresses!=null && !addresses.isEmpty())
                             city = addresses.get(0).getLocality();
                         if(city==null)
                             city = "Melbourne";
@@ -139,12 +162,12 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
                     }
                     else
                     {
-                        city="Melbourne";
+                        city="Sunnyvale";
                     }
                     zuoshang.setText(city);
 
                     db.collection("123")
-                            .whereArrayContains(searchfield, city)
+                            .whereEqualTo(searchfield, city)
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -201,6 +224,30 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
                 openFilechooser();
             }
         });
+
+        userInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    performSearch();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+
+
+    }
+
+    public void performSearch() {
+        searchToken = userInput.getText().toString();
+        Intent intent = new Intent(getActivity(), searchresult.class);
+        intent.putExtra("token", searchToken);
+        intent.putExtra("longitude", longitude);
+        intent.putExtra("latitude",latitude);
+        startActivity(intent);
     }
 
     @Override
@@ -298,6 +345,8 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
 
         }
     };
+
+
     public void initRecyleview(ArrayList itemlist) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         RecyclerView recRecyclerView = getView().findViewById(R.id.recommendation);
@@ -325,5 +374,31 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, 1);
+    }
+    private void dispatchPictureTakerAction(){
+        Intent takePic = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(takePic.resolveActivity(getActivity().getPackageManager())!=null){
+            File photoFile = null;
+            photoFile = createPhotoFile();
+
+            if(photoFile!=null) {
+                pathToFile = photoFile.getAbsolutePath();
+                Uri photoURI = FileProvider.getUriForFile(getActivity(),"com.example.provider.camera.fileprovider",photoFile);
+                takePic.putExtra(MediaStore.EXTRA_OUTPUT,photoURI);
+                startActivityForResult(takePic,1);
+            }
+
+        }
+    }
+    private File createPhotoFile(){
+        String name = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File storageDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = null;
+        try {
+            image = File.createTempFile(name,".jpg",storageDir);
+        } catch (IOException e){
+            Log.d("mylog","Excep:" + e.toString());
+        }
+        return image;
     }
 }

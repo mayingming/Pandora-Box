@@ -2,6 +2,7 @@ package com.example.mobilepro.ui.dashboard;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 
 import android.location.Address;
@@ -87,6 +88,7 @@ public class DashboardFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel =
                 ViewModelProviders.of(this).get(DashboardViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
         return root;
     }
@@ -132,8 +134,12 @@ public class DashboardFragment extends Fragment {
                             addresses = geocoder.getFromLocation(latitude, longitude, 1);
                         } catch (IOException e) {
                             e.printStackTrace();
+                            addresses = null;
                         }
-                        city = addresses.get(0).getLocality();
+                        if(addresses!=null && !addresses.isEmpty())
+                            city = addresses.get(0).getLocality();
+                        if(city==null)
+                            city = "Melbourne";
                         Log.d("loc", city);
                     }
                 }

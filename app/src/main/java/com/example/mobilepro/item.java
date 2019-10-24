@@ -23,10 +23,6 @@ public class item {
         tags = name.split(" ");
     }
 
-    public void createTags(String name){
-        tags = name.split(" ");
-    }
-
     public item(String name, String address, String shopName, String image, double price)
     {
         this.name = name;

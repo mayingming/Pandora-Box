@@ -1,17 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="#ffffff"
-    android:orientation="vertical"
+    android:layout_gravity="center"
     >
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:id="@+id/uploadImageView"
+            android:layout_width="162dp"
+            android:layout_height="162dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/upload_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/spacedog" />
+
+        <EditText
+            android:id="@+id/upload_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/inputfield_styles"
+            android:hint="item name"
+            app:layout_constraintBottom_toTopOf="@+id/upload_shopName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/uploadImageView" />
+
+        <EditText
+            android:id="@+id/upload_shopName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/inputfield_styles"
+            android:hint="shop name"
+            app:layout_constraintBottom_toTopOf="@+id/upload_price"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/upload_name" />
+
+        <EditText
+            android:id="@+id/upload_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/inputfield_styles"
+            android:hint="price"
+            app:layout_constraintBottom_toTopOf="@+id/upload_address"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/upload_shopName" />
+
+        <EditText
+            android:id="@+id/upload_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/inputfield_styles"
+            android:hint="address"
+            app:layout_constraintBottom_toTopOf="@+id/upload_phone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/upload_price" />
+
+        <EditText
+            android:id="@+id/upload_phone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/inputfield_styles"
+            android:hint="contact number"
+            app:layout_constraintBottom_toTopOf="@+id/upload_discription"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/upload_address" />
+
+        <EditText
+            android:background="@drawable/inputfield_styles"
+            android:hint="Describe your item"
+            android:id="@+id/upload_discription"
+            android:layout_width="0dp"
+            android:layout_height="130dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toTopOf="@+id/post"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/upload_phone" />
+
+        <Button
+            android:id="@+id/choosePic"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="60dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/btn_style"
+            android:padding="5dp"
+            android:text="Choose picture"
+            android:textColor="#FCF9F9"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/post"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+
+            />
+
+        <Button
+            android:id="@+id/post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/btn_style"
+            android:padding="5dp"
+            android:text="Post"
+            android:textColor="#FCF9F9"
+            app:layout_constraintBaseline_toBaselineOf="@+id/choosePic"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -21,119 +150,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/uploadImageView"
             app:layout_constraintEnd_toEndOf="@+id/uploadImageView"
             app:layout_constraintStart_toStartOf="@+id/uploadImageView"
-            app:layout_constraintTop_toTopOf="@+id/uploadImageView"
-            app:layout_constraintVertical_bias="0.462" />
-
-
-        <ImageView
-            android:id="@+id/uploadImageView"
-            android:layout_width="247dp"
-            android:layout_height="187dp"
-            android:layout_marginStart="8dp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.49"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@color/colorAccent" />
+            app:layout_constraintTop_toTopOf="@+id/uploadImageView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginTop="60dp"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/choosePic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choose Picture"></Button>
-
-        <EditText
-            android:id="@+id/upload_name"
-            android:layout_width="265dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/inputfield_styles"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Name"
-            tools:layout_editor_absoluteX="202dp"
-            tools:layout_editor_absoluteY="318dp" />
-
-        <EditText
-            android:id="@+id/upload_shopName"
-            android:layout_width="265dp"
-            android:layout_height="51dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/inputfield_styles"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Shop Name"
-            tools:layout_editor_absoluteX="202dp"
-            tools:layout_editor_absoluteY="374dp" />
-
-        <Button
-            android:id="@+id/post"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Post"></Button>
-
-        <EditText
-            android:id="@+id/upload_phone"
-            android:layout_width="265dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/inputfield_styles"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Phone"
-            tools:layout_editor_absoluteX="202dp"
-            tools:layout_editor_absoluteY="548dp" />
-
-        <EditText
-            android:id="@+id/upload_price"
-            android:layout_width="264dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="number"
-            android:text="Price" />
-
-        <EditText
-            android:id="@+id/upload_discription"
-            android:layout_width="311dp"
-            android:layout_height="101dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/inputfield_styles"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="discription"
-            tools:layout_editor_absoluteX="179dp"
-            tools:layout_editor_absoluteY="608dp" />
-
-        <EditText
-            android:id="@+id/upload_address"
-            android:layout_width="265dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/inputfield_styles"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Address"
-            tools:layout_editor_absoluteX="202dp"
-            tools:layout_editor_absoluteY="496dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    </LinearLayout>
-
-
-</LinearLayout>
+</ScrollView>

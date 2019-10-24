@@ -3,4 +3,10 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="regName">Name</string>
+    <string name="regMail">Email</string>
+    <string name="regPassword">Password</string>
+    <string name="regConfirm">Confirm Password</string>
+    <string name="sign_up_message"><u>Don\'t have an account? Sign up</u></string>
+    <string name="sign_in_message"><u>Already have an account? Sign in</u></string>
 </resources>
