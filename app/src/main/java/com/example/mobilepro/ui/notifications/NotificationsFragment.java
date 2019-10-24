@@ -30,6 +30,7 @@ public class NotificationsFragment extends Fragment {
     private TextView userName;
     private Object fragment;
     private URI userImageURL;
+    private Button logOut;
 
 
     private NotificationsViewModel notificationsViewModel;
@@ -52,21 +53,36 @@ public class NotificationsFragment extends Fragment {
         userbutton = (Button) getView().findViewById(R.id.userbutton);
         userphoto = (ImageView) getView().findViewById(R.id.userimage);
         userName = (TextView) getView().findViewById(R.id.userName);
+        logOut = (Button) getView().findViewById(R.id.logOutButton);
+
+        userbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userbutton.setVisibility(View.INVISIBLE);
+                logOut.setVisibility(View.VISIBLE);
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                startActivityForResult(intent, 3);
+            }
+        });
+
+        logOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                userbutton.setVisibility(View.VISIBLE);
+                logOut.setVisibility(View.INVISIBLE);
+                userName.setText("");
+                userphoto.setImageResource(R.drawable.userphoto);
+            }
+        });
 
         if (user != null){
             userName.setText(user.getEmail());
             Glide.with(this).load(user.getPhotoUrl()).into(userphoto);
-            View b = getView().findViewById(R.id.userbutton);
-            b.setVisibility(View.GONE);
+            userbutton.setVisibility(View.INVISIBLE);
         }
         else {
-            userbutton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    startActivityForResult(intent, 3);
-                }
-            });
+            logOut.setVisibility(View.INVISIBLE);
         }
     }
 

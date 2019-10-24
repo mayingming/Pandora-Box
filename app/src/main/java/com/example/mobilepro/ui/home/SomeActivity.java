@@ -1,8 +1,11 @@
 package com.example.mobilepro.ui.home;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,6 +37,8 @@ public class SomeActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private item item;
     private Context context;
+    private double longitude;
+    private double latitude;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class SomeActivity extends AppCompatActivity {
         itemPhone = (TextView) findViewById(R.id.showItemPhone);
         itemDescription = (TextView) findViewById(R.id.showItemReviews);
 
+
         String itemid = getIntent().getExtras().getString("id");
         Log.d("item",itemid);
         db = FirebaseFirestore.getInstance();
@@ -59,6 +65,8 @@ public class SomeActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+                        longitude = (double) document.getData().getOrDefault("longitude",0);
+                        latitude = (double) document.getData().getOrDefault("latitude",0);
                         itemName.setText((String)document.getData().getOrDefault("name","null"));
                         itemshopName.setText((String)document.getData().getOrDefault("shopName","null"));
                         itemPrice.setText(document.getData().getOrDefault("price","null").toString());
@@ -78,6 +86,19 @@ public class SomeActivity extends AppCompatActivity {
             }
         });
 
-
+        itemImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(longitude != 0 || latitude != 0){
+                    Log.d("geo",longitude +"/////" +latitude);
+                    Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("geo:"    + latitude +
+                            ","       + longitude +
+                            "?q="     + latitude +
+                            ","       + longitude +
+                            "("       + itemshopName.getText().toString() + ")"));
+                    startActivity(i);
+                }
+            }
+        });
     }
 }
