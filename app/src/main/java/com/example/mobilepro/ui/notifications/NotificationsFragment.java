@@ -74,7 +74,7 @@ public class NotificationsFragment extends Fragment {
                 FirebaseAuth.getInstance().signOut();
                 userbutton.setVisibility(View.VISIBLE);
                 logOut.setVisibility(View.INVISIBLE);
-                userName.setText("USER NAME");
+                userName.setText("");
                 userphoto.setImageResource(R.drawable.userphoto);
             }
         });
@@ -86,6 +86,7 @@ public class NotificationsFragment extends Fragment {
         }
         else {
             logOut.setVisibility(View.INVISIBLE);
+            userName.setVisibility(View.INVISIBLE);
         }
     }
 
