@@ -9,20 +9,25 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,8 +46,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -51,6 +59,7 @@ import java.util.Random;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.app.Activity.RESULT_OK;
+import static android.os.Environment.getExternalStoragePublicDirectory;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -58,7 +67,7 @@ import com.google.android.gms.location.LocationServices;
 public class DashboardFragment extends Fragment {
 
     private static final int PICK_IMAGE_REQUEST = 1;
-    private Button buttonChooseImage;
+//    private Button buttonChooseImage;
     private Button buttonPost;
     private ProgressBar progressBar;
     private ProgressBar progressBar2;
@@ -72,6 +81,7 @@ public class DashboardFragment extends Fragment {
     private double longitude;
     private double latitude;
     private String city;
+    private String pathToFile;
 
     private FusedLocationProviderClient client;
 
@@ -112,7 +122,7 @@ public class DashboardFragment extends Fragment {
         client = LocationServices.getFusedLocationProviderClient(getActivity());
 
 
-        buttonChooseImage = (Button) getView().findViewById(R.id.choosePic);
+//        buttonChooseImage = (Button) getView().findViewById(R.id.choosePic);
         buttonPost = (Button) getView().findViewById(R.id.post);
         progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
         progressBar2 = (ProgressBar) getView().findViewById(R.id.progressBar2);
@@ -157,12 +167,12 @@ public class DashboardFragment extends Fragment {
             });
         }
 
-        buttonChooseImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openFilechooser();
-            }
-        });
+//        buttonChooseImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                openFilechooser();
+//            }
+//        });
 
         buttonPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,6 +231,63 @@ public class DashboardFragment extends Fragment {
                         });
             }
         });
+
+
+        uploadImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(getActivity(),uploadImageView);
+                popupMenu.getMenuInflater().inflate(R.menu.pop_up_menu, popupMenu.getMenu());
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()){
+
+                            case R.id.camera:
+                                dispatchPictureTakerAction();
+                                return true;
+                            case R.id.gallery:
+                                openFilechooser();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                popupMenu.show();
+            }
+        });
+
+    }
+
+    private void dispatchPictureTakerAction(){
+        Intent takePic = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(takePic.resolveActivity(getActivity().getPackageManager())!=null){
+            File photoFile = null;
+            photoFile = createPhotoFile();
+
+            if(photoFile!=null) {
+                pathToFile = photoFile.getAbsolutePath();
+                Uri photoURI = FileProvider.getUriForFile(getActivity(),"com.example.provider.camera.fileprovider",photoFile);
+                imageURI = photoURI;
+                takePic.putExtra(MediaStore.EXTRA_OUTPUT,photoURI);
+                startActivityForResult(takePic,2);
+            }
+
+        }
+    }
+
+    private File createPhotoFile(){
+        String name = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File storageDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = null;
+        try {
+            image = File.createTempFile(name,".jpg",storageDir);
+        } catch (IOException e){
+            Log.d("mylog","Excep:" + e.toString());
+        }
+        return image;
     }
 
     private void requestPermission(){
@@ -245,11 +312,14 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        progressBar2.setVisibility(View.VISIBLE);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-        && data != null && data.getData() != null) {
+        if ((requestCode == PICK_IMAGE_REQUEST || requestCode == 2) && resultCode == RESULT_OK) {
+            if(requestCode==PICK_IMAGE_REQUEST&&(data==null||data.getData()==null))
+                return;
+            progressBar2.setVisibility(View.VISIBLE);
+            uploadImageView.setVisibility(View.INVISIBLE);
+            if (requestCode == PICK_IMAGE_REQUEST)
+                imageURI = data.getData();
             Random random = new Random();
-            imageURI = data.getData();
             Glide.with(this).load(imageURI).into(uploadImageView);
 
             String id = "image/"+System.currentTimeMillis() + "" + random.nextInt(10000) +".JPEG";
@@ -272,6 +342,7 @@ public class DashboardFragment extends Fragment {
 
                         imageUrl = downloadUri.toString();
                         progressBar2.setVisibility(View.INVISIBLE);
+                        uploadImageView.setVisibility(View.VISIBLE);
                         Log.d("123",imageUrl);
                     }
                 }

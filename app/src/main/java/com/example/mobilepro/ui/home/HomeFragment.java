@@ -22,6 +22,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -36,6 +37,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.example.mobilepro.R;
@@ -67,6 +70,7 @@ import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationListener {
 
+    private ImageView uploadPopUp;
     private EditText userInput;
     private Button search;
     private HomeViewModel homeViewModel;
@@ -96,6 +100,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
     private String imageResult;
     private String pathToFile;
     private Boolean shaking;
+    private ImageView shakeit;
     ArrayList<item> newItemList;
 
 
@@ -112,10 +117,12 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
 
         super.onViewCreated(view, savedInstanceState);
 
+        uploadPopUp = (ImageView)getView().findViewById(R.id.pop_up_button);
         userInput = (EditText) getView().findViewById(R.id.userInput);
-        search = (Button) getView().findViewById(R.id.searchButton);
-        camera = (Button) getView().findViewById(R.id.camera);
-        album = (Button) getView().findViewById(R.id.gallery);
+//        search = (Button) getView().findViewById(R.id.searchButton);
+//        camera = (Button) getView().findViewById(R.id.camera);
+//        album = (Button) getView().findViewById(R.id.gallery);
+        shakeit = (ImageView)getView().findViewById(R.id.shakeit);
         zuoshang = (TextView) getView().findViewById(R.id.textView);
         context = getActivity();
         db = FirebaseFirestore.getInstance();
@@ -124,14 +131,39 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
         newItemList = new ArrayList<item>();
 
 
+        shakeit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(shaking)
+                    return;
+                shaking = true;
+                newItemList.clear();
+                Random random = new Random();
+                int abc = random.nextInt(reclist.size());
+                for(int i=0;i<4;i++)
+                {
+                    if(abc>=reclist.size())
+                        abc=0;
+                    newItemList.add(reclist.get(abc));
+                    abc++;
+                }
+                initRecyleview(newItemList);
+                shaking = false;
+
+
+            }
+        });
+
+
         requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
 
 
-        camera.setOnClickListener(new View.OnClickListener(){
-            public  void onClick(View view){
-                dispatchPictureTakerAction();
-            }
-        });
+//        camera.setOnClickListener(new View.OnClickListener(){
+//            public  void onClick(View view){
+//                dispatchPictureTakerAction();
+//            }
+//        });
 
         requestPermission();
 
@@ -210,24 +242,24 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
         acelLast = SensorManager.GRAVITY_EARTH;
         shake = 0.00f;
 
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchToken = userInput.getText().toString();
-                Intent intent = new Intent(getActivity(), searchresult.class);
-                intent.putExtra("token", searchToken);
-                intent.putExtra("longitude", longitude);
-                intent.putExtra("latitude",latitude);
-                startActivity(intent);
-            }
-        });
+//        search.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                searchToken = userInput.getText().toString();
+//                Intent intent = new Intent(getActivity(), searchresult.class);
+//                intent.putExtra("token", searchToken);
+//                intent.putExtra("longitude", longitude);
+//                intent.putExtra("latitude",latitude);
+//                startActivity(intent);
+//            }
+//        });
 
-        album.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick (View v){
-                openFilechooser();
-            }
-        });
+//        album.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick (View v){
+//                openFilechooser();
+//            }
+//        });
 
         userInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
@@ -240,7 +272,31 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
             }
         });
 
+        uploadPopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(getActivity(),uploadPopUp);
+                popupMenu.getMenuInflater().inflate(R.menu.pop_up_menu, popupMenu.getMenu());
 
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()){
+
+                            case R.id.camera:
+                                dispatchPictureTakerAction();
+                                return true;
+                            case R.id.gallery:
+                                openFilechooser();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                popupMenu.show();
+            }
+        });
 
 
     }

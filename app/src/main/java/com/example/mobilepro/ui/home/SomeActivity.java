@@ -2,6 +2,7 @@ package com.example.mobilepro.ui.home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,7 +53,7 @@ public class SomeActivity extends AppCompatActivity {
         itemPrice = (TextView) findViewById(R.id.showItemPrice);
         itemAddress = (TextView) findViewById(R.id.showItemAddress);
         itemPhone = (TextView) findViewById(R.id.showItemPhone);
-        itemDescription = (TextView) findViewById(R.id.showItemReviews);
+        itemDescription = (TextView) findViewById(R.id.showItemDescription);
 
 
         String itemid = getIntent().getExtras().getString("id");
@@ -72,6 +73,7 @@ public class SomeActivity extends AppCompatActivity {
                         itemPrice.setText(document.getData().getOrDefault("price","null").toString());
                         itemPhone.setText((String)document.getData().getOrDefault("phone","null"));
                         itemAddress.setText((String)document.getData().getOrDefault("address","null"));
+                        itemAddress.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
                         itemDescription.setText((String)document.getData().getOrDefault("description","null"));
                         Glide.with(context)
                                 .load((String)document.getData().getOrDefault("image","null"))
@@ -86,7 +88,7 @@ public class SomeActivity extends AppCompatActivity {
             }
         });
 
-        itemImageView.setOnClickListener(new View.OnClickListener() {
+        itemAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(longitude != 0 || latitude != 0){
@@ -100,5 +102,7 @@ public class SomeActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 }

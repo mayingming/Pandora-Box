@@ -1,72 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
+    android:id="@+id/recommendationportion"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:background="@drawable/listview_style">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/recommendationportion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/recImageView"
+        android:layout_width="182dp"
+        android:layout_height="172dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView10"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/spacedog" />
 
-        <ImageView
-            android:id="@+id/recImageView"
-            android:layout_width="105dp"
-            android:layout_height="109dp"
-            android:layout_marginStart="44dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="32dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/recitemName"
-            app:layout_constraintHorizontal_bias="0.039"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/spacedog" />
+    <TextView
+        android:id="@+id/recitemName"
+        android:layout_width="0dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="19dp"
+        android:fontFamily="@font/archivo_black"
+        android:text="I am dog"
+        app:layout_constraintBottom_toBottomOf="@+id/recImageView"
+        app:layout_constraintStart_toEndOf="@+id/recImageView"
+        app:layout_constraintTop_toTopOf="@+id/recImageView"
+        app:layout_constraintVertical_bias="0.0" />
 
-        <TextView
-            android:id="@+id/recitemName"
-            android:layout_width="167dp"
-            android:layout_height="28dp"
-            android:text="I am dog"
-            app:layout_constraintBottom_toTopOf="@+id/recshopName"
-            app:layout_constraintEnd_toEndOf="@+id/recshopName"
-            app:layout_constraintTop_toTopOf="@+id/recImageView"
-            app:layout_constraintVertical_bias="0.0" />
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="6dp"
+        android:text="price $AUD:"
+        app:layout_constraintStart_toEndOf="@+id/recImageView"
+        app:layout_constraintTop_toBottomOf="@+id/recdistance" />
 
-        <TextView
-            android:id="@+id/recprice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            app:layout_constraintBaseline_toBaselineOf="@+id/recdistance"
-            app:layout_constraintEnd_toEndOf="@+id/recshopName" />
+    <TextView
+        android:id="@+id/recdistance"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="2dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/recImageView"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
-        <TextView
-            android:id="@+id/recdistance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="@+id/recImageView"
-            app:layout_constraintEnd_toStartOf="@+id/recprice"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/recshopName" />
+    <TextView
+        android:id="@+id/recprice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="2dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/recImageView"
+        app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
-        <TextView
-            android:id="@+id/recshopName"
-            android:layout_width="167dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="44dp"
-            android:layout_marginBottom="20dp"
-            android:text="TextView"
-            app:layout_constraintBottom_toTopOf="@+id/recprice"
-            app:layout_constraintEnd_toEndOf="parent" />
+    <TextView
+        android:id="@+id/recshopName"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="2dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/recImageView"
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="6dp"
+        android:text="address:"
+        app:layout_constraintStart_toEndOf="@+id/recImageView"
+        app:layout_constraintTop_toBottomOf="@+id/recshopName" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="2dp"
+        android:text="shop:"
+        app:layout_constraintBottom_toTopOf="@+id/recshopName"
+        app:layout_constraintStart_toEndOf="@+id/recImageView"
+        app:layout_constraintTop_toBottomOf="@+id/recitemName" />
 
-
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

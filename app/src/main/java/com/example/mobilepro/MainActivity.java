@@ -19,6 +19,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        View overlay = findViewById(R.id.nav_host_fragment);
+
+        overlay.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                      |View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                      |View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
+
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
