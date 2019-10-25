@@ -226,7 +226,7 @@ public class DashboardFragment extends Fragment {
                                 uploadAddress.setText("");
                                 uploadPhone.setText("");
                                 uploadDescription.setText("");
-                                uploadImageView.setImageResource(R.drawable.spacedog);
+                                uploadImageView.setImageResource(R.drawable.uploadimage);
                             }
                         });
             }

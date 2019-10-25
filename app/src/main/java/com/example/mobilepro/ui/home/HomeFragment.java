@@ -140,7 +140,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
             @Override
             public void onClick(View view) {
 
-                if(shaking)
+                if(shaking||reclist.size()==0)
                     return;
                 shaking = true;
                 newItemList.clear();
