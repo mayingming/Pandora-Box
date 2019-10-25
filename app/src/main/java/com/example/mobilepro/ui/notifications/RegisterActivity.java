@@ -172,9 +172,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-
-        Intent homeActivity = new Intent(getApplicationContext(), HomeFragment.class);
-        startActivity(homeActivity);
+//        Intent intent = new Intent(this, LoginActivity.class);
+//        startActivity(intent);
         finish();
     }
 

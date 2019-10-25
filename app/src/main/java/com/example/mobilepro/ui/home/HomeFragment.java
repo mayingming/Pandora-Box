@@ -84,6 +84,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
     private ArrayList<item> reclist;
     private ArrayList<String> recids;
     private item recitem;
+    private int recPosition;
     private String recitemid;
     private SensorManager sm;
     private float acelVal;
@@ -141,6 +142,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
                 newItemList.clear();
                 Random random = new Random();
                 int abc = random.nextInt(reclist.size());
+                recPosition = abc;
                 for(int i=0;i<4;i++)
                 {
                     if(abc>=reclist.size())
@@ -156,7 +158,6 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
         });
 
 
-        requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
 
 
 //        camera.setOnClickListener(new View.OnClickListener(){
@@ -165,13 +166,16 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
 //            }
 //        });
 
-        requestPermission();
+//        requestPermission();
+        requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, ACCESS_FINE_LOCATION},2);
 
         client = LocationServices.getFusedLocationProviderClient(getActivity());
 
         if(ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
             city = "Melbourne";
+            zuoshang.setText(city);
+            setRec();
         }
         else
         {
@@ -201,39 +205,12 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
                         city="Melbourne";
                     }
                     zuoshang.setText(city);
-
-                    db.collection("123")
-                            .whereEqualTo(searchfield, "Melbourne")
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        reclist = new ArrayList<>();
-                                        recids = new ArrayList<>();
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                            Map<String, Object> data = document.getData();
-                                            double price, latitude, longitude;
-                                            try {
-                                                price = Double.valueOf(data.get("price").toString());
-                                                latitude = Double.valueOf(data.get("latitude").toString());
-                                                longitude = Double.valueOf(data.get("longitude").toString());
-                                            } catch (Exception x) {
-                                                price = 0;
-                                                latitude = 0;
-                                                longitude = 0;
-                                            }
-                                            recitem = new item((String) data.get("name"), (String) data.get("address"), (String) data.get("image"), (String) data.get("shopName"), price, (String) data.get("phone"), (String) data.get("description"), (String) data.get("time"), (String) data.get("city"), null, null,latitude ,longitude);
-                                            reclist.add(recitem);
-                                            recids.add(document.getId());
-                                        }
-                                        initRecyleview(reclist);
-                                    }
-                                }
-                            });
+                    setRec();
                 }
             });
         }
+
+
 
 
         sm = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
@@ -409,6 +386,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
                 newItemList.clear();
                 Random random = new Random();
                 int abc = random.nextInt(reclist.size());
+                recPosition = abc;
                 for(int i=0;i<4;i++)
                 {
                     if(abc>=reclist.size())
@@ -416,6 +394,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
                     newItemList.add(reclist.get(abc));
                     abc++;
                 }
+
                 initRecyleview(newItemList);
                 shaking = false;
             }
@@ -439,16 +418,19 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
     public void OnRecmendationClick(int position) {
         Log.d("click", "onclick: clicked.");
         Intent intent = new Intent(getActivity(), SomeActivity.class);
+        position += recPosition;
+        if(position > recids.size()-1)
+            position -= recids.size();
         intent.putExtra("id",recids.get(position));
-        intent.putExtra("longitude", longitude);
-        intent.putExtra("latitude",latitude);
+//        intent.putExtra("longitude", longitude);
+//        intent.putExtra("latitude",latitude);
         startActivity(intent);
         recitemid  = recids.get(position);
     }
 
-    private void requestPermission(){
-        ActivityCompat.requestPermissions(getActivity(),new String[]{ACCESS_FINE_LOCATION},1);
-    }
+//    private void requestPermission(){
+//        ActivityCompat.requestPermissions(getActivity(),new String[]{ACCESS_FINE_LOCATION},1);
+//    }
 
     private void openFilechooser(){
         Intent intent = new Intent();
@@ -482,5 +464,36 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
             Log.d("mylog","Excep:" + e.toString());
         }
         return image;
+    }
+    private void setRec(){
+        db.collection("123")
+                .whereEqualTo(searchfield, "Melbourne")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            reclist = new ArrayList<>();
+                            recids = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Map<String, Object> data = document.getData();
+                                double price, latitude, longitude;
+                                try {
+                                    price = Double.valueOf(data.get("price").toString());
+                                    latitude = Double.valueOf(data.get("latitude").toString());
+                                    longitude = Double.valueOf(data.get("longitude").toString());
+                                } catch (Exception x) {
+                                    price = 0;
+                                    latitude = 0;
+                                    longitude = 0;
+                                }
+                                recitem = new item((String) data.get("name"), (String) data.get("address"), (String) data.get("image"), (String) data.get("shopName"), price, (String) data.get("phone"), (String) data.get("description"), (String) data.get("time"), (String) data.get("city"), null, null,latitude ,longitude);
+                                reclist.add(recitem);
+                                recids.add(document.getId());
+                            }
+                            initRecyleview(reclist);
+                        }
+                    }
+                });
     }
 }

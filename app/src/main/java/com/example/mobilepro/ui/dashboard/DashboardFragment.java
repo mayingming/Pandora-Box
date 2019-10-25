@@ -118,7 +118,7 @@ public class DashboardFragment extends Fragment {
 
         myAuthentication = FirebaseAuth.getInstance();
         user = myAuthentication.getCurrentUser();
-        requestPermission();
+//        requestPermission();
         client = LocationServices.getFusedLocationProviderClient(getActivity());
 
 
@@ -290,9 +290,9 @@ public class DashboardFragment extends Fragment {
         return image;
     }
 
-    private void requestPermission(){
-        ActivityCompat.requestPermissions(getActivity(),new String[]{ACCESS_FINE_LOCATION},1);
-    }
+//    private void requestPermission(){
+//        ActivityCompat.requestPermissions(getActivity(),new String[]{ACCESS_FINE_LOCATION},1);
+//    }
     private void openFilechooser(){
         Intent intent = new Intent();
         intent.setType("image/*");

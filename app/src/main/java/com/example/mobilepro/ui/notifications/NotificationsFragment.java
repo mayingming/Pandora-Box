@@ -2,6 +2,7 @@ package com.example.mobilepro.ui.notifications;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,12 +35,14 @@ public class NotificationsFragment extends Fragment {
 
 
     private NotificationsViewModel notificationsViewModel;
-    FirebaseAuth myAuthentication = FirebaseAuth.getInstance();
-    FirebaseUser user = myAuthentication.getCurrentUser();
+    FirebaseAuth myAuthentication;
+    FirebaseUser user;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         fragment = this;
+        myAuthentication = FirebaseAuth.getInstance();
+        user = myAuthentication.getCurrentUser();
         notificationsViewModel =
                 ViewModelProviders.of(this).get(NotificationsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
@@ -71,7 +74,7 @@ public class NotificationsFragment extends Fragment {
                 FirebaseAuth.getInstance().signOut();
                 userbutton.setVisibility(View.VISIBLE);
                 logOut.setVisibility(View.INVISIBLE);
-                userName.setText("");
+                userName.setText("USER NAME");
                 userphoto.setImageResource(R.drawable.userphoto);
             }
         });
@@ -92,6 +95,9 @@ public class NotificationsFragment extends Fragment {
         if (requestCode == 3 && resultCode == RESULT_OK)
         {
             try{
+                myAuthentication = FirebaseAuth.getInstance();
+                user = myAuthentication.getCurrentUser();
+                Log.d("log", user.getEmail()+"");
                 userName.setText(user.getEmail());
                 Glide.with(this).load(user.getPhotoUrl()).into(userphoto);
             }
