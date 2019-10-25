@@ -39,6 +39,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.mobilepro.R;
@@ -103,6 +104,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
     private Boolean shaking;
     private ImageView shakeit;
     ArrayList<item> newItemList;
+    private ProgressBar progressBar;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -120,6 +122,8 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
 
         uploadPopUp = (ImageView)getView().findViewById(R.id.pop_up_button);
         userInput = (EditText) getView().findViewById(R.id.userInput);
+        progressBar = (ProgressBar) getView().findViewById(R.id.progressBar3);
+
 //        search = (Button) getView().findViewById(R.id.searchButton);
 //        camera = (Button) getView().findViewById(R.id.camera);
 //        album = (Button) getView().findViewById(R.id.gallery);
@@ -413,6 +417,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
         recRecyclerView.setLayoutManager(linearLayoutManager);
         adapter = new RecAdapter(itemlist, context, this);
         recRecyclerView.setAdapter(adapter);
+        progressBar.setVisibility(View.INVISIBLE);
     }
     @Override
     public void OnRecmendationClick(int position) {
@@ -467,7 +472,7 @@ public class HomeFragment extends Fragment implements RecAdapter.OnRecmendationL
     }
     private void setRec(){
         db.collection("123")
-                .whereEqualTo(searchfield, "Melbourne")
+                .whereEqualTo(searchfield, city)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

@@ -112,5 +112,15 @@
 
     </ScrollView>
 
+    <ProgressBar
+        android:id="@+id/progressBar3"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="210dp"
+        android:layout_height="192dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/scroll1"
+        app:layout_constraintTop_toTopOf="@+id/searchBar" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
